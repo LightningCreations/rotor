@@ -1,7 +1,4 @@
-use crate::{
-    cog::P2Cog,
-    hub::P2Hub,
-};
+use crate::{cog::P2Cog, hub::P2Hub};
 
 pub struct Propeller2 {
     hub: P2Hub,
