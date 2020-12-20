@@ -8,7 +8,7 @@ pub struct P2Cog {
     lutram: [u32; 512],
     /// Address of instruction being fetched. Pipeline stage 1
     fetching_instr: u32,
-<<<<<<< HEAD
+
     /// Instruction (and possibly immediate) currently being decoded. Pipeline stage 2.
     decoding_instr: (u32, Option<u32>),
     /// Instruction (and possibly immediate) currently being executed. Pipeline stage 3.
@@ -16,13 +16,6 @@ pub struct P2Cog {
     executing_instr: (u32, Option<u32>),
 
     pc: u32,
-=======
-    /// Instruction currently being decoded. Pipeline stage 2.
-    decoding_instr: u32,
-    /// Instruction currently being executed. Pipeline stage 3.
-    // CONSIDER: Maybe using decoding_instr to do decode in advance? This is probably slower than normal execution with how simple P2 encoding is though.
-    executing_instr: u32,
->>>>>>> 142c40682e1f99eb5775952268866668eb16f3b7
 
     /// Altered D register, if set by the last executed instr (ALT* class)
     alt_d: Option<u32>,
