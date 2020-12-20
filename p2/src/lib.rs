@@ -1,3 +1,6 @@
+pub mod hub;
+pub mod cog;
+
 #[cfg(test)]
 mod tests {
     #[test]
