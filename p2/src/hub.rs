@@ -2,7 +2,7 @@ use crate::cog::P2Cog;
 
 pub struct Hub {
     /// May have 1 to 16 cogs.
-    cogs: Box<[P2Cog]>,
+    _cogs: Box<[P2Cog]>,
 
-    ram: Box<[u8]>,
+    _ram: Box<[u8]>,
 }
