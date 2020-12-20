@@ -44,8 +44,7 @@ pub struct P2Cog {
     _skip_ctrl: Option<(u32, u32, SkipType)>,
 
     /// The `Q` register.
-    /// Somehow, for some reason, SETQ and SETQ2 modify the behavior of the subsequent instructions in some cases, hence the bool to differentiate the two.
-    _q: (u32, bool),
+    _q: (u32, LastQSetter),
 
     /// Interrupt enable.
     _interrupt_en: bool,
@@ -66,4 +65,10 @@ impl P2Cog {
 pub enum SkipType {
     Normal,
     Fast,
+}
+
+pub enum LastQSetter {
+    SETQ, 
+    SETQ2,
+    Other,
 }
