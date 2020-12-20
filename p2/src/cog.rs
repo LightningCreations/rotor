@@ -7,9 +7,11 @@ pub struct P2Cog {
     _regs: [u32; 512],
     /// LUTRAM.
     _lutram: [u32; 512],
+    /// Hardware stack. (Stack, Depth)
+    _stack: ([u32; 8], u8),
+
     /// Address of instruction being fetched. Pipeline stage 1
     _fetching_instr: u32,
-
     /// Instruction (and possibly immediate) currently being decoded. Pipeline stage 2.
     _decoding_instr: (u32, Option<u32>),
     /// Instruction (and possibly immediate) currently being executed. Pipeline stage 3.
