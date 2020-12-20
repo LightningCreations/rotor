@@ -1,4 +1,4 @@
-use crate::hub::Hub;
+use crate::hub::P2Hub;
 use std::num::NonZeroU32;
 
 pub struct P2Cog {
@@ -59,7 +59,7 @@ pub struct P2Cog {
 }
 
 impl P2Cog {
-    pub fn execute_2cycle(&mut self, _hub: &mut Hub) {
+    pub fn execute_cycle(&mut self, _hub: &mut P2Hub) {
         unimplemented!();
     }
 }

@@ -2,6 +2,7 @@
 
 pub mod cog;
 pub mod hub;
+pub mod p2;
 
 #[cfg(test)]
 mod tests {
