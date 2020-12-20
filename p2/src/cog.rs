@@ -8,11 +8,13 @@ pub struct P2Cog {
     lutram: [u32; 512],
     /// Address of instruction being fetched. Pipeline stage 1
     fetching_instr: u32,
-    /// Instruction currently being decoded. Pipeline stage 2.
-    decoding_instr: u32,
-    /// Instruction currently being executed. Pipeline stage 3.
+    /// Instruction (and possibly immediate) currently being decoded. Pipeline stage 2.
+    decoding_instr: (u32, Option<u32>),
+    /// Instruction (and possibly immediate) currently being executed. Pipeline stage 3.
     // CONSIDER: Maybe using decoding_instr to do decode in advance? This is probably slower than normal execution with how simple P2 encoding is though.
-    executing_instr: u32,
+    executing_instr: (u32, Option<u32>),
+
+    pc: u32,
 
     /// Altered D register, if set by the last executed instr (ALT* class)
     alt_d: Option<u32>,
@@ -21,10 +23,11 @@ pub struct P2Cog {
     /// Altered R register, if set by the last executed instr (ALT* class)
     alt_r: Option<u32>,
 
-    /// ALTI things
-    alt_i_d: Option<u32>,
-    /// ALTI things
-    alt_i_s: Option<u32>,
+    /// Used by some ALT* class instructions with NIB/BYTE/WORD instructions.
+    alt_n: Option<u8>,
+
+    /// ALTI data and mask, respectively.
+    alt_i: Option<(u32, u32)>,
 
     // need to include stuff some of the other ALT class instrs use, but idk what they need as of now. --moony
 
@@ -33,7 +36,8 @@ pub struct P2Cog {
     skip_type: SkipType,
 
     /// The `Q` register.
-    q: u32,
+    /// Somehow, for some reason, SETQ and SETQ2 modify the behavior of the subsequent instructions in some cases, hence the bool to differentiate the two.
+    q: (u32, bool),
 
     /// Interrupt enable.
     interrupt_en: bool,
