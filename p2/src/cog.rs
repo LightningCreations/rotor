@@ -68,7 +68,7 @@ pub enum SkipType {
 }
 
 pub enum LastQSetter {
-    SETQ, 
+    SETQ,
     SETQ2,
     Other,
 }
