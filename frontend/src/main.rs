@@ -1,3 +1,5 @@
+#![deny(warnings)]
+
 use std::{env, fs};
 
 fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {

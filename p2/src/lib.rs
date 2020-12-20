@@ -1,5 +1,7 @@
-pub mod hub;
+#![deny(warnings)]
+
 pub mod cog;
+pub mod hub;
 
 #[cfg(test)]
 mod tests {
