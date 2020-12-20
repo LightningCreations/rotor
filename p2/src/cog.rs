@@ -31,7 +31,6 @@ pub struct P2Cog {
     alt_i: Option<(u32, u32)>,
 
     // need to include stuff some of the other ALT class instrs use, but idk what they need as of now. --moony
-
     skip_mask: u32,
     skip_address: u32,
     skip_type: SkipType,
