@@ -339,6 +339,15 @@ impl InstructionKind {
             0b0111101 => IK::ONES,
             0b0111110 => IK::TEST,
             0b0111111 => IK::TESTN,
+            0b1000000 | 0b1000001 => IK::SETNIB,
+            0b1000010 | 0b1000011 => IK::GETNIB,
+            0b1000100 | 0b1000101 => IK::ROLNIB,
+            0b1000110 => IK::SETBYTE,
+            0b1000111 => IK::GETBYTE,
+            0b1001000 => IK::ROLBYTE,
+            0b1001001 => IK::SETWORD,
+            0b1001010 => IK::GETWORD,
+            0b1001011 => IK::ROLWORD,
             _ => todo!(),
         }
     }
