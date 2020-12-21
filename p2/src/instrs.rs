@@ -265,6 +265,9 @@ impl InstructionKind {
         }
 
         use InstructionKind as IK;
+        use get_wc_flag as wc;
+        use get_wz_flag as wz;
+        use get_wcz_field as wcz;
 
         match (inp & 0b0000_1111111_000_000000000_000000000) >> 21 {
             0b0000000 => IK::ROR,
@@ -299,21 +302,21 @@ impl InstructionKind {
             0b0011101 => IK::SUMNC,
             0b0011110 => IK::SUMZ,
             0b0011111 => IK::SUMNZ,
-            0b0100000 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTB,
+            0b0100000 if wc(inp) ^ wz(inp) => IK::TESTB,
             0b0100000 => IK::BITL,
-            0b0100001 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTBN,
+            0b0100001 if wc(inp) ^ wz(inp) => IK::TESTBN,
             0b0100001 => IK::BITH,
-            0b0100010 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTB_AND,
+            0b0100010 if wc(inp) ^ wz(inp) => IK::TESTB_AND,
             0b0100010 => IK::BITC,
-            0b0100011 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTBN_AND,
+            0b0100011 if wc(inp) ^ wz(inp) => IK::TESTBN_AND,
             0b0100011 => IK::BITNC,
-            0b0100100 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTB_OR,
+            0b0100100 if wc(inp) ^ wz(inp) => IK::TESTB_OR,
             0b0100100 => IK::BITZ,
-            0b0100101 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTBN_OR,
+            0b0100101 if wc(inp) ^ wz(inp) => IK::TESTBN_OR,
             0b0100101 => IK::BITNZ,
-            0b0100110 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTB_XOR,
+            0b0100110 if wc(inp) ^ wz(inp) => IK::TESTB_XOR,
             0b0100110 => IK::BITRND,
-            0b0100111 if get_wc_flag(inp) ^ get_wz_flag(inp) => IK::TESTBN_XOR,
+            0b0100111 if wc(inp) ^ wz(inp) => IK::TESTBN_XOR,
             0b0100111 => IK::BITNOT,
             0b0101000 => IK::AND,
             0b0101001 => IK::ANDN,
@@ -345,9 +348,10 @@ impl InstructionKind {
             0b1000110 => IK::SETBYTE,
             0b1000111 => IK::GETBYTE,
             0b1001000 => IK::ROLBYTE,
-            0b1001001 => IK::SETWORD,
-            0b1001010 => IK::GETWORD,
-            0b1001011 => IK::ROLWORD,
+            0b1001001 if !wc(inp) => IK::SETWORD,
+            0b1001001 => IK::GETWORD,
+            0b1001010 if !wc(inp) => IK::ROLWORD,
+            0b1001100 if wcz(inp) == 0b10 => IK::ALTSN, 
             _ => todo!(),
         }
     }
@@ -419,6 +423,10 @@ pub fn get_wc_flag(inp: u32) -> bool {
     ((inp & 0b0000_0000000_100_000000000_000000000) >> 20) != 0
 }
 
+pub fn get_wcz_field(inp: u32) -> u8 {
+    ((inp & 0b0000_0000000_110_000000000_000000000) >> 19) as u8
+}
+
 #[cfg(test)]
 mod tests {
     use super::{get_s_field, InstructionKind, InstructionPrefix};
@@ -435,6 +443,14 @@ mod tests {
         assert_eq!(
             InstructionKind::decode(0b1111_0000000_000_000000000_000000000),
             InstructionKind::ROR
+        );
+    }
+
+    #[test]
+    fn decode_altsn() {
+        assert_eq!(
+            InstructionKind::decode(0b1111_1001100_100_000000000_000000000),
+            InstructionKind::ALTSN,
         );
     }
 
