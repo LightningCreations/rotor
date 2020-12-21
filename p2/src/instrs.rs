@@ -322,7 +322,6 @@ impl InstructionPrefix {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::{InstructionKind, InstructionPrefix};
