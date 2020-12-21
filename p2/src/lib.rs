@@ -1,4 +1,5 @@
 #![deny(warnings)]
+#![allow(clippy::unknown_clippy_lints)] // clippy shut up
 #![allow(clippy::unusual_byte_groupings)]
 #![allow(clippy::inconsistent_digit_grouping)]
 
