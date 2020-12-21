@@ -264,13 +264,41 @@ impl InstructionKind {
             return InstructionKind::NOP;
         }
 
+        use InstructionKind as IK;
+
         match (inp & 0b0000_1111111_000_000000000_000000000) >> 21 {
-            0b0000000 => InstructionKind::ROR,
-            0b0000001 => InstructionKind::ROL,
-            0b0000010 => InstructionKind::SHR,
-            0b0000011 => InstructionKind::SHL,
-            0b0000100 => InstructionKind::RCR,
-            0b0000101 => InstructionKind::RCL,
+            0b0000000 => IK::ROR,
+            0b0000001 => IK::ROL,
+            0b0000010 => IK::SHR,
+            0b0000011 => IK::SHL,
+            0b0000100 => IK::RCR,
+            0b0000101 => IK::RCL,
+            0b0000110 => IK::SAR,
+            0b0000111 => IK::SAL,
+            0b0001000 => IK::ADD,
+            0b0001001 => IK::ADDX,
+            0b0001010 => IK::ADDS,
+            0b0001011 => IK::ADDSX,
+            0b0001100 => IK::SUB,
+            0b0001101 => IK::SUBX,
+            0b0001110 => IK::SUBS,
+            0b0001111 => IK::SUBSX,
+            0b0010000 => IK::CMP,
+            0b0010001 => IK::CMPX,
+            0b0010010 => IK::CMPS,
+            0b0010011 => IK::CMPSX,
+            0b0010100 => IK::CMPR,
+            0b0010101 => IK::CMPM,
+            0b0010110 => IK::SUBR,
+            0b0010111 => IK::CMPSUB,
+            0b0011000 => IK::FGE,
+            0b0011001 => IK::FLE,
+            0b0011010 => IK::FGES,
+            0b0011011 => IK::FLES,
+            0b0011100 => IK::SUMC,
+            0b0011101 => IK::SUMNC,
+            0b0011110 => IK::SUMZ,
+            0b0011111 => IK::SUMNZ,
             _ => todo!(),
         }
     }
@@ -344,7 +372,7 @@ pub fn get_wc_flag(inp: u32) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{InstructionKind, InstructionPrefix, get_s_field};
+    use super::{get_s_field, InstructionKind, InstructionPrefix};
     #[test]
     fn decode_nop() {
         assert_eq!(
@@ -371,9 +399,6 @@ mod tests {
 
     #[test]
     fn decode_s() {
-        assert_eq!(
-            get_s_field(0b1010_0000000_000_000000000_000000001),
-            1
-        );
+        assert_eq!(get_s_field(0b1010_0000000_000_000000000_000000001), 1);
     }
 }
