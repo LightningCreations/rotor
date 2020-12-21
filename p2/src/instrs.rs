@@ -322,9 +322,29 @@ impl InstructionPrefix {
     }
 }
 
+pub fn get_s_field(inp: u32) -> u16 {
+    (inp & 0b0000_0000000_000_000000000_111111111) as u16
+}
+
+pub fn get_d_field(inp: u32) -> u16 {
+    ((inp & 0b0000_0000000_000_111111111_000000000) >> 9) as u16
+}
+
+pub fn get_imm_flag(inp: u32) -> bool {
+    ((inp & 0b0000_0000000_001_000000000_000000000) >> 18) != 0
+}
+
+pub fn get_wz_flag(inp: u32) -> bool {
+    ((inp & 0b0000_0000000_010_000000000_000000000) >> 19) != 0
+}
+
+pub fn get_wc_flag(inp: u32) -> bool {
+    ((inp & 0b0000_0000000_100_000000000_000000000) >> 20) != 0
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{InstructionKind, InstructionPrefix};
+    use super::{InstructionKind, InstructionPrefix, get_s_field};
     #[test]
     fn decode_nop() {
         assert_eq!(
@@ -346,6 +366,14 @@ mod tests {
         assert_eq!(
             InstructionPrefix::decode(0b1010_0000000_000_000000000_000000000),
             InstructionPrefix::IF_Z,
+        );
+    }
+
+    #[test]
+    fn decode_s() {
+        assert_eq!(
+            get_s_field(0b1010_0000000_000_000000000_000000001),
+            1
         );
     }
 }
