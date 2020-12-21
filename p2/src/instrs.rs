@@ -264,10 +264,10 @@ impl InstructionKind {
             return InstructionKind::NOP;
         }
 
-        use InstructionKind as IK;
         use get_wc_flag as wc;
-        use get_wz_flag as wz;
         use get_wcz_field as wcz;
+        use get_wz_flag as wz;
+        use InstructionKind as IK;
 
         match (inp & 0b0000_1111111_000_000000000_000000000) >> 21 {
             0b0000000 => IK::ROR,
@@ -351,7 +351,7 @@ impl InstructionKind {
             0b1001001 if !wc(inp) => IK::SETWORD,
             0b1001001 => IK::GETWORD,
             0b1001010 if !wc(inp) => IK::ROLWORD,
-            0b1001100 if wcz(inp) == 0b10 => IK::ALTSN, 
+            0b1001100 if wcz(inp) == 0b10 => IK::ALTSN,
             _ => todo!(),
         }
     }
