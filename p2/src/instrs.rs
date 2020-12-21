@@ -1,3 +1,5 @@
+#[allow(non_camel_case_types)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum InstructionKind {
     NOP,
     ROR,
@@ -138,7 +140,7 @@ pub enum InstructionKind {
     TJNS,
     TJV,
     JEVENT, // JINT through JNQMT. The way they're encoded means the specifics of which is which can be offloaded to the instr's impl.
-            // Also dodges around a ton of potential code dupe, as they all do roughly the same thing.
+    // Also dodges around a ton of potential code dupe, as they all do roughly the same thing.
     UNUSED1, // Unused instruction slot 0b1011110_1
     UNUSED2, // Unused instruction slot 0b1011111_0
     SETPAT,
@@ -188,7 +190,7 @@ pub enum InstructionKind {
     SETXFRQ,
     GETXACC,
     WAITX,
-    SETSE, // See JEVENT rationale.
+    SETSE,     // See JEVENT rationale.
     POLLEVENT, // See JEVENT rationale.
     WAITEVENT, // See JEVENT rationale.
     ALLOWI,
@@ -256,21 +258,95 @@ pub enum InstructionKind {
     AUGD,
 }
 
+impl InstructionKind {
+    pub fn decode(inp: u32) -> InstructionKind {
+        if inp == 0 {
+            return InstructionKind::NOP;
+        }
+
+        match (inp & 0b0000_1111111_000_000000000_000000000) >> 21 {
+            0b0000000 => InstructionKind::ROR,
+            0b0000001 => InstructionKind::ROL,
+            0b0000010 => InstructionKind::SHR,
+            0b0000011 => InstructionKind::SHL,
+            0b0000100 => InstructionKind::RCR,
+            0b0000101 => InstructionKind::RCL,
+            _ => todo!(),
+        }
+    }
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum InstructionPrefix {
-    RET          = 0b0000,
-    IF_NC_AND_NZ = 0b0000,
-    IF_NC_AND_Z  = 0b0010,
-    IF_NC        = 0b0011,
-    IF_C_AND_NZ  = 0b0100,
-    IF_NZ        = 0b0101,
-    IF_C_NE_Z    = 0b0110,
-    IF_NC_OR_NZ  = 0b0111,
-    IF_C_AND_Z   = 0b1000,
-    IF_C_EQ_Z    = 0b1001,
-    IF_Z         = 0b1010,
-    IF_NC_OR_Z   = 0b1011,
-    IF_C         = 0b1100,
-    IF_C_OR_NZ   = 0b1101,
-    IF_C_OR_Z    = 0b1110,
-    NONE         = 0b1111,
+    RET = 0b0000,
+    IF_NC_AND_NZ = 0b0001,
+    IF_NC_AND_Z = 0b0010,
+    IF_NC = 0b0011,
+    IF_C_AND_NZ = 0b0100,
+    IF_NZ = 0b0101,
+    IF_C_NE_Z = 0b0110,
+    IF_NC_OR_NZ = 0b0111,
+    IF_C_AND_Z = 0b1000,
+    IF_C_EQ_Z = 0b1001,
+    IF_Z = 0b1010,
+    IF_NC_OR_Z = 0b1011,
+    IF_C = 0b1100,
+    IF_C_OR_NZ = 0b1101,
+    IF_C_OR_Z = 0b1110,
+    NONE = 0b1111,
+}
+
+impl InstructionPrefix {
+    pub fn decode(inp: u32) -> InstructionPrefix {
+        // ew
+        match (inp & 0xF000_0000) >> 28 {
+            0 => InstructionPrefix::RET,
+            1 => InstructionPrefix::IF_NC_AND_NZ,
+            2 => InstructionPrefix::IF_NC_AND_Z,
+            3 => InstructionPrefix::IF_NC,
+            4 => InstructionPrefix::IF_C_AND_NZ,
+            5 => InstructionPrefix::IF_NZ,
+            6 => InstructionPrefix::IF_C_NE_Z,
+            7 => InstructionPrefix::IF_NC_OR_NZ,
+            8 => InstructionPrefix::IF_C_AND_Z,
+            9 => InstructionPrefix::IF_C_EQ_Z,
+            10 => InstructionPrefix::IF_Z,
+            11 => InstructionPrefix::IF_NC_OR_Z,
+            12 => InstructionPrefix::IF_C,
+            13 => InstructionPrefix::IF_C_OR_NZ,
+            14 => InstructionPrefix::IF_C_OR_Z,
+            15 => InstructionPrefix::NONE,
+            _ => unreachable!(),
+        }
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use super::{InstructionKind, InstructionPrefix};
+    #[test]
+    fn decode_nop() {
+        assert_eq!(
+            InstructionKind::decode(0b0000_0000000_000_000000000_000000000),
+            InstructionKind::NOP
+        );
+    }
+
+    #[test]
+    fn decode_form_1() {
+        assert_eq!(
+            InstructionKind::decode(0b1111_0000000_000_000000000_000000000),
+            InstructionKind::ROR
+        );
+    }
+
+    #[test]
+    fn decode_prefix() {
+        assert_eq!(
+            InstructionPrefix::decode(0b1010_0000000_000_000000000_000000000),
+            InstructionPrefix::IF_Z,
+        );
+    }
 }
