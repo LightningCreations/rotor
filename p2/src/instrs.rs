@@ -269,7 +269,6 @@ impl InstructionKind {
         let wc = get_wc_flag(inp);
         let wz = get_wz_flag(inp);
         let wcz = get_wcz_field(inp);
-        let wczi = get_wczi_field(inp);
         let s = get_s_field(inp);
         let d = get_d_field(inp);
         let i = get_imm_flag(inp);
@@ -383,10 +382,10 @@ impl InstructionKind {
             0b1010000 if wc => IK::MULS,
             0b1010001 if !wc => IK::SCA,
             0b1010001 if wc => IK::SCAS,
-            0b1010010 if wcz == 00 => IK::ADDPIX,
-            0b1010010 if wcz == 01 => IK::MULPIX,
-            0b1010010 if wcz == 10 => IK::BLNPIX,
-            0b1010010 if wcz == 11 => IK::MIXPIX,
+            0b1010010 if wcz == 0b00 => IK::ADDPIX,
+            0b1010010 if wcz == 0b01 => IK::MULPIX,
+            0b1010010 if wcz == 0b10 => IK::BLNPIX,
+            0b1010010 if wcz == 0b11 => IK::MIXPIX,
             0b1010011 if (0b00..=0b10).contains(&wcz) => IK::ADDCT,
             0b1010011 => IK::WMLONG,
             0b1010100 if wz => IK::RQPIN,
@@ -477,6 +476,7 @@ impl InstructionKind {
                             0b100001 => IK::STALLI,
                             0b100010..=0b100100 => IK::TRGINT,
                             0b100101..=0b100111 => IK::NIXINT,
+                            _ => IK::NOP,
                         }
                     }
                     0b0100101..=0b0100111 => IK::SETINT,
@@ -531,6 +531,7 @@ impl InstructionKind {
                     0b1101111 if i => IK::MODCZ,
                     0b1110000 => IK::SETSCP,
                     0b1110001 => IK::GETSCP,
+                    _ => IK::NOP,
                 }
             }
             0b1101100 => IK::LJMP,
@@ -633,7 +634,6 @@ pub const fn get_wcz_field(inp: u32) -> u8 {
 pub const fn get_wczi_field(inp: u32) -> u8 {
     ((inp & 0b0000_0000000_111_000000000_000000000) >> 18) as u8
 }
-
 
 #[cfg(test)]
 mod tests {
